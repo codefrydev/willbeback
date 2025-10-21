@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Stream Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .interactive-element {
+            box-sizing: border-box; 
+            touch-action: none;
+            user-select: none;
+            position: absolute;
+        }
+        .interactive-element.is-interacting {
+            border: 2px dashed #38bdf8;
+            z-index: 10;
+        }
+        .interactive-element > * {
+            width: 100%;
+            height: 100%;
+        }
+        /* Style for color input */
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid #4a5568;
+            border-radius: 50%;
+        }
+        
+        /* Hover effects for better UI/UX */
+        .interactive-element:hover {
+            border: 2px solid #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .interactive-element.is-interacting:hover {
+            border: 2px dashed #38bdf8;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+        }
+        
+        
+        input[type="text"]:hover, input[type="url"]:hover, input[type="number"]:hover, select:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+        
+        input[type="text"]:focus, input[type="url"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            outline: none;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .bg-slate-800:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        
+        /* Color input hover effect */
+        input[type="color"]:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        
+        /* Checkbox hover effect */
+        input[type="checkbox"]:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Section headers hover effect */
+        .bg-slate-900:hover {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-800 text-white overflow-hidden">
+
+    <!-- Controller UI -->
+    <div id="controller-ui" class="p-4 h-screen overflow-y-auto">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold text-cyan-400">Stream Dashboard</h1>
+                <div class="flex space-x-2">
+                    <button id="reset-position-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
+                        Reset Layout
+                    </button>
+                    <button id="toggle-view-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
+                        Show Preview (Ctrl+P)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                
+                <!-- Left Column: Scene Settings & Core Elements -->
+                <div class="space-y-4">
+                    <!-- Scene Settings -->
+                    <div class="bg-slate-900 p-4 rounded-lg shadow-xl">
+                        <h2 class="text-lg font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Scene Settings</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="background-color-input" class="block text-sm font-medium text-slate-300 mb-1">Background Color</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="color" id="background-color-input">
+                                    <input type="text" id="background-color-hex" class="flex-1 bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="background-image-input" class="block text-sm font-medium text-slate-300 mb-1">Background Image URL</label>
+                                <input type="url" id="background-image-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm" placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Core Elements -->
+                    <div class="bg-slate-900 p-4 rounded-lg shadow-xl">
+                        <h2 class="text-lg font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Core Elements</h2>
+                        <form id="controller-form" class="space-y-3">
+                            <div class="flex items-end space-x-2">
+                                <div class="flex-grow">
+                                    <label for="main-title-input" class="block text-sm font-medium text-slate-300 mb-1">Main Title</label>
+                                    <input type="text" id="main-title-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+                                </div>
+                                <div>
+                                    <label for="main-title-color-input" class="block text-sm font-medium text-slate-300 mb-1 text-center">Color</label>
+                                    <input type="color" id="main-title-color-input">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="gif-url-input" class="block text-sm font-medium text-slate-300 mb-1">Primary GIF/Image URL</label>
+                                <input type="url" id="gif-url-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label for="enable-timer-checkbox" class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="enable-timer-checkbox" checked class="h-4 w-4 rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-cyan-500">
+                                    <span class="text-sm font-medium text-slate-300">Enable Countdown Timer</span>
+                                </label>
+                            </div>
+                             <div id="timer-input-container">
+                                 <label for="timer-minutes-input" class="block text-sm font-medium text-slate-300 mb-1">Countdown (Minutes)</label>
+                                 <input type="number" id="timer-minutes-input" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+                             </div>
+                             <div class="pt-2 border-t border-slate-700">
+                                 <button id="add-core-text-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-3 rounded-lg transition-colors shadow-md w-full text-sm">
+                                     <i class="fas fa-plus mr-1"></i>Add Core Text Element
+                                 </button>
+                             </div>
+                         </form>
+                     </div>
+                </div>
+
+                <!-- Middle Column: Social Handles -->
+                <div class="space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-lg shadow-xl">
+                        <h2 class="text-lg font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Social Handles</h2>
+                        <div id="socials-form-container" class="space-y-2 mb-3">
+                            <!-- Social handle forms will be injected here -->
+                        </div>
+                        <button id="add-social-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md w-full">
+                            <i class="fas fa-plus mr-2"></i>Add Social
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Custom Elements -->
+                <div class="space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-lg shadow-xl">
+                        <h2 class="text-lg font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Custom Elements</h2>
+                        
+                        <!-- Quick Add Buttons -->
+                        <div class="space-y-3">
+                            <!-- Text Elements -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-400 mb-2">Text</h3>
+                                <button id="add-text-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-lg transition-colors shadow-md w-full text-sm">
+                                    <i class="fas fa-plus mr-1"></i>Add Text
+                                </button>
+                            </div>
+                            
+                            <!-- Image Elements -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-400 mb-2">Images</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="add-image-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-image mr-1"></i>Image
+                                    </button>
+                                    <button id="add-gif-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-play mr-1"></i>GIF
+                                    </button>
+                                    <button id="add-logo-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-certificate mr-1"></i>Logo
+                                    </button>
+                                    <button id="add-banner-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-flag mr-1"></i>Banner
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Audio Elements -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-400 mb-2">Audio</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="add-audio-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-music mr-1"></i>Audio
+                                    </button>
+                                    <button id="add-sound-effect-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+                                        <i class="fas fa-volume-up mr-1"></i>Sound FX
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Elements Container (Full Width Below) -->
+            <div class="mt-4">
+                <div id="dynamic-elements-form-container" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Live Preview Display -->
+    <div id="display-view" class="hidden w-screen h-screen relative bg-slate-900">
+        <div id="display-background" class="w-full h-full bg-cover bg-center">
+            
+            <!-- Static Elements -->
+            <div id="title-container" class="interactive-element">
+                <h1 id="main-title" class="w-full h-full flex items-center justify-center text-center font-black uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]" style="font-size: 10vmin;"></h1>
+            </div>
+            <div id="gif-container" class="interactive-element">
+                 <img id="gif-display" src="" alt="Live Stream GIF" class="w-full h-full object-contain">
+            </div>
+            <div id="timer-container" class="interactive-element">
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="bg-cyan-500/80 text-white font-bold py-3 px-6 rounded-full inline-block shadow-lg text-center" style="font-size: 5vmin;">
+                        Returning in: <span id="countdown" class="font-mono"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="socials-container" class="interactive-element">
+                <div id="socials-display-wrapper" class="w-full h-full flex justify-center items-center flex-wrap gap-x-6 gap-y-2 text-slate-300 p-4">
+                    <!-- Socials will be dynamically rendered here -->
+                </div>
+            </div>
+            
+            <div id="dynamic-elements-display-container"></div>
+
+        </div>
+        <button id="close-preview-btn" class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-full w-10 h-10 flex items-center justify-center transition-colors shadow-md z-20">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- FORM ELEMENTS ---
+        const form = document.getElementById('controller-form');
+        const titleInput = document.getElementById('main-title-input');
+        const titleColorInput = document.getElementById('main-title-color-input');
+        const gifUrlInput = document.getElementById('gif-url-input');
+        const enableTimerCheckbox = document.getElementById('enable-timer-checkbox');
+        const timerInputContainer = document.getElementById('timer-input-container');
+        const timerMinutesInput = document.getElementById('timer-minutes-input');
+        const bgColorInput = document.getElementById('background-color-input');
+        const bgColorHex = document.getElementById('background-color-hex');
+        const bgImageInput = document.getElementById('background-image-input');
+        
+        // --- DISPLAY CONTENT ELEMENTS ---
+        const titleEl = document.getElementById('main-title');
+        const gifEl = document.getElementById('gif-display');
+        const countdownEl = document.getElementById('countdown');
+        const displayBg = document.getElementById('display-background');
+
+        // --- DISPLAY WRAPPER ELEMENTS ---
+        const timerContainer = document.getElementById('timer-container');
+        const socialsDisplayWrapper = document.getElementById('socials-display-wrapper');
+
+        // --- SOCIALS ---
+        const addSocialBtn = document.getElementById('add-social-btn');
+        const socialsFormContainer = document.getElementById('socials-form-container');
+
+        // --- DYNAMIC ELEMENTS ---
+        const addTextBtn = document.getElementById('add-text-btn');
+        const addImageBtn = document.getElementById('add-image-btn');
+        const dynamicFormContainer = document.getElementById('dynamic-elements-form-container');
+        const dynamicDisplayContainer = document.getElementById('dynamic-elements-display-container');
+
+        // --- UI/TOGGLE ELEMENTS ---
+        const toggleBtn = document.getElementById('toggle-view-btn');
+        const controllerUi = document.getElementById('controller-ui');
+        const displayView = document.getElementById('display-view');
+        const closePreviewBtn = document.getElementById('close-preview-btn');
+        const resetPositionBtn = document.getElementById('reset-position-btn');
+
+        // --- STATE MANAGEMENT ---
+        const staticElementStateKey = 'streamStaticElementsState';
+        const dynamicElementStateKey = 'streamDynamicElementsState';
+        const socialHandlesStateKey = 'streamSocialsState';
+        let countdownInterval;
+        let dynamicElements = [];
+        let socialHandles = [];
+
+        // --- DEFAULTS & CONFIG ---
+        const socialIcons = {
+            twitter: 'fa-brands fa-twitter',
+            instagram: 'fa-brands fa-instagram',
+            youtube: 'fa-brands fa-youtube',
+            twitch: 'fa-brands fa-twitch',
+            discord: 'fa-brands fa-discord',
+            facebook: 'fa-brands fa-facebook',
+            tiktok: 'fa-brands fa-tiktok',
+            github: 'fa-brands fa-github',
+            linkedin: 'fa-brands fa-linkedin',
+            website: 'fas fa-globe'
+        };
+
+        const defaultContent = {
+            title: "Be Right Back",
+            titleColor: "#38bdf8",
+            gifUrl: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzQ0dWpnemYzaDl2b2NqMmh6M3NmejVzZGNvbjBuc2U5cTY1bW1mZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VbnUQpnihPSIgIXuZv/giphy.gif",
+            isTimerEnabled: true,
+            timerMinutes: "1",
+            bgColor: "#1e293b",
+            bgImage: ""
+        };
+
+        const defaultStaticStates = {
+            'title-container': { x: 0.25, y: 0.075, width: 0.5, height: 0.2 },
+            'gif-container': { x: 0.3, y: 0.325, width: 0.4, height: 0.3 },
+            'timer-container': { x: 0.25, y: 0.675, width: 0.5, height: 0.1 },
+            'socials-container': { x: 0.25, y: 0.825, width: 0.5, height: 0.1 },
+        };
+
+        // --- CORE FUNCTIONS ---
+        function toggleView() {
+            controllerUi.classList.toggle('hidden');
+            displayView.classList.toggle('hidden');
+            if (!displayView.classList.contains('hidden')) {
+                document.querySelectorAll('#title-container, #gif-container, #timer-container, #socials-container').forEach(el => {
+                    applyState(el, staticElementStateKey, defaultStaticStates);
+                });
+                dynamicElements.forEach(dynEl => {
+                    const displayEl = document.getElementById(dynEl.id);
+                    if (displayEl) applyState(displayEl, dynamicElementStateKey, {});
+                });
+            }
+        }
+
+        function saveStaticContentData() {
+            const data = {
+                title: titleInput.value || defaultContent.title,
+                titleColor: titleColorInput.value || defaultContent.titleColor,
+                gifUrl: gifUrlInput.value || defaultContent.gifUrl,
+                isTimerEnabled: enableTimerCheckbox.checked,
+                timerMinutes: timerMinutesInput.value || defaultContent.timerMinutes,
+                bgColor: bgColorInput.value || defaultContent.bgColor,
+                bgImage: bgImageInput.value || defaultContent.bgImage,
+            };
+            localStorage.setItem('streamScreenData', JSON.stringify(data));
+            updateStaticDisplayContent(data);
+        }
+        
+        function updateStaticDisplayContent(data) {
+            titleEl.textContent = data.title;
+            titleEl.style.color = data.titleColor;
+            if (gifEl.src !== data.gifUrl) gifEl.src = data.gifUrl;
+            
+            if (data.bgImage) {
+                displayBg.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('${data.bgImage}')`;
+                displayBg.style.backgroundColor = '';
+            } else {
+                displayBg.style.backgroundImage = '';
+                displayBg.style.backgroundColor = data.bgColor;
+            }
+            
+            timerContainer.style.display = data.isTimerEnabled ? 'block' : 'none';
+            if(data.isTimerEnabled) {
+                startTimer(data.timerMinutes);
+            } else {
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+        }
+        
+        function startTimer(minutes) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            let timeInSeconds = Math.max(0, parseInt(minutes, 10)) * 60;
+            const update = () => {
+                if (timeInSeconds < 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.textContent = "00:00";
+                    return;
+                }
+                const mins = Math.floor(timeInSeconds / 60);
+                let secs = timeInSeconds % 60;
+                secs = secs < 10 ? '0' + secs : secs;
+                countdownEl.textContent = `${mins}:${secs}`;
+                timeInSeconds--;
+            };
+            update();
+            countdownInterval = setInterval(update, 1000);
+        }
+
+        function loadStaticController() {
+            const savedData = JSON.parse(localStorage.getItem('streamScreenData')) || {};
+            titleInput.value = savedData.title || defaultContent.title;
+            titleColorInput.value = savedData.titleColor || defaultContent.titleColor;
+            gifUrlInput.value = savedData.gifUrl || defaultContent.gifUrl;
+            enableTimerCheckbox.checked = savedData.isTimerEnabled ?? defaultContent.isTimerEnabled;
+            timerMinutesInput.value = savedData.timerMinutes || defaultContent.timerMinutes;
+            bgColorInput.value = savedData.bgColor || defaultContent.bgColor;
+            bgColorHex.value = savedData.bgColor || defaultContent.bgColor;
+            bgImageInput.value = savedData.bgImage || defaultContent.bgImage;
+            timerInputContainer.classList.toggle('hidden', !enableTimerCheckbox.checked);
+            saveStaticContentData();
+        }
+
+        // --- SOCIALS FUNCTIONS ---
+        function saveSocials() {
+            localStorage.setItem(socialHandlesStateKey, JSON.stringify(socialHandles));
+        }
+
+        function loadSocials() {
+            const saved = JSON.parse(localStorage.getItem(socialHandlesStateKey));
+            if (saved) {
+                socialHandles = saved;
+                socialsFormContainer.innerHTML = '';
+                socialHandles.forEach(renderSocialForm);
+                renderSocialsDisplay();
+            }
+        }
+
+        function addSocial() {
+            const newSocial = {
+                id: `social-${Date.now()}`,
+                icon: 'twitter',
+                text: '@handle'
+            };
+            socialHandles.push(newSocial);
+            renderSocialForm(newSocial);
+            renderSocialsDisplay();
+            saveSocials();
+        }
+
+        function removeSocial(id) {
+            socialHandles = socialHandles.filter(s => s.id !== id);
+            document.getElementById(`form-${id}`).remove();
+            renderSocialsDisplay();
+            saveSocials();
+        }
+        
+        function updateSocial(id, prop, value) {
+            const social = socialHandles.find(s => s.id === id);
+            if (social) {
+                social[prop] = value;
+                renderSocialsDisplay();
+                saveSocials();
+            }
+        }
+
+        function renderSocialForm(socialData) {
+            const formCard = document.createElement('div');
+            formCard.id = `form-${socialData.id}`;
+            formCard.className = 'bg-slate-800 p-2 rounded-lg border border-slate-700 flex items-center space-x-2';
+            
+            let options = '';
+            for (const key in socialIcons) {
+                options += `<option value="${key}" ${socialData.icon === key ? 'selected' : ''}>${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
+            }
+
+            formCard.innerHTML = `
+                <select class="bg-slate-700 border border-slate-600 rounded-md px-2 py-1 text-xs w-20">${options}</select>
+                <input type="text" value="${socialData.text}" class="flex-1 bg-slate-700 border border-slate-600 rounded-md px-2 py-1 text-xs">
+                <button class="text-red-500 hover:text-red-400 text-sm">&times;</button>
+            `;
+
+            formCard.querySelector('select').onchange = (e) => updateSocial(socialData.id, 'icon', e.target.value);
+            formCard.querySelector('input').oninput = (e) => updateSocial(socialData.id, 'text', e.target.value);
+            formCard.querySelector('button').onclick = () => removeSocial(socialData.id);
+            socialsFormContainer.appendChild(formCard);
+        }
+
+        function renderSocialsDisplay() {
+            socialsDisplayWrapper.innerHTML = '';
+            socialHandles.forEach(s => {
+                const socialEl = document.createElement('div');
+                socialEl.className = 'flex items-center space-x-2';
+                socialEl.innerHTML = `
+                    <i class="${socialIcons[s.icon]} text-cyan-400" style="font-size: 4vmin;"></i>
+                    <span style="font-size: 3.5vmin;">${s.text}</span>
+                `;
+                socialsDisplayWrapper.appendChild(socialEl);
+            });
+        }
+
+        // --- DYNAMIC ELEMENT FUNCTIONS ---
+        function saveDynamicElements() { localStorage.setItem(dynamicElementStateKey, JSON.stringify(dynamicElements)); }
+
+        function loadDynamicElements() {
+            const saved = JSON.parse(localStorage.getItem(dynamicElementStateKey));
+            if (saved) {
+                dynamicElements = saved;
+                dynamicElements.forEach(renderDynamicElement);
+            }
+        }
+
+        function addDynamicElement(type) {
+            let defaultContent, defaultState;
+            
+            switch(type) {
+                case 'text':
+                    defaultContent = 'New Text';
+                    defaultState = { x: 0.1, y: 0.1, width: 0.3, height: 0.15 };
+                    break;
+                case 'image':
+                    defaultContent = 'https://placehold.co/400x200/0f172a/38bdf8?text=New+Image';
+                    defaultState = { x: 0.1, y: 0.1, width: 0.3, height: 0.15 };
+                    break;
+                case 'gif':
+                    defaultContent = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzQ0dWpnemYzaDl2b2NqMmh6M3NmejVzZGNvbjBuc2U5cTY1bW1mZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VbnUQpnihPSIgIXuZv/giphy.gif';
+                    defaultState = { x: 0.1, y: 0.1, width: 0.4, height: 0.2 };
+                    break;
+                case 'logo':
+                    defaultContent = 'https://placehold.co/200x200/1e293b/38bdf8?text=LOGO';
+                    defaultState = { x: 0.05, y: 0.05, width: 0.15, height: 0.15 };
+                    break;
+                case 'banner':
+                    defaultContent = 'https://placehold.co/600x150/1e293b/38bdf8?text=BANNER';
+                    defaultState = { x: 0.2, y: 0.05, width: 0.6, height: 0.1 };
+                    break;
+                case 'audio':
+                    defaultContent = '';
+                    defaultState = { x: 0.05, y: 0.9, width: 0.2, height: 0.05 };
+                    break;
+                case 'sound-effect':
+                    defaultContent = '';
+                    defaultState = { x: 0.75, y: 0.9, width: 0.2, height: 0.05 };
+                    break;
+                case 'core-text':
+                    defaultContent = 'Core Text Element';
+                    defaultState = { x: 0.1, y: 0.3, width: 0.8, height: 0.15 };
+                    break;
+                default:
+                    defaultContent = 'https://placehold.co/400x200/0f172a/38bdf8?text=New+Element';
+                    defaultState = { x: 0.1, y: 0.1, width: 0.3, height: 0.15 };
+            }
+            
+            const newElement = {
+                id: `dyn-${Date.now()}`,
+                type: type,
+                content: defaultContent,
+                color: '#FFFFFF',
+                state: defaultState
+            };
+            dynamicElements.push(newElement);
+            renderDynamicElement(newElement);
+            saveDynamicElements();
+        }
+
+        function removeDynamicElement(id) {
+            dynamicElements = dynamicElements.filter(el => el.id !== id);
+            document.getElementById(`form-${id}`)?.remove();
+            document.getElementById(id)?.remove();
+            saveDynamicElements();
+        }
+
+        function updateDynamicElement(id, prop, value) {
+            const element = dynamicElements.find(el => el.id === id);
+            if (element) {
+                element[prop] = value;
+                
+                if (prop === 'content') {
+                    // Clear file data when URL is updated
+                    if (element.imageFile) {
+                        if (element.imageFileUrl) {
+                            URL.revokeObjectURL(element.imageFileUrl);
+                        }
+                        element.imageFile = null;
+                        element.fileName = null;
+                        element.imageFileUrl = null;
+                    }
+                    
+                    // Update display based on element type
+                    if (element.type === 'text' || element.type === 'core-text') {
+                        const displayEl = document.getElementById(id).firstElementChild;
+                        displayEl.textContent = value;
+                    } else if (element.type === 'image' || element.type === 'gif' || element.type === 'logo' || element.type === 'banner') {
+                        updateImageDisplay(id);
+                    }
+                } else if (prop === 'color') {
+                    if (element.type === 'text' || element.type === 'core-text') {
+                        const displayEl = document.getElementById(id).firstElementChild;
+                        displayEl.style.color = value;
+                    }
+                }
+                saveDynamicElements();
+            }
+        }
+
+        function renderDynamicElement(elementData) {
+            const formCard = document.createElement('div');
+            formCard.id = `form-${elementData.id}`;
+            formCard.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700';
+            
+            let label, inputType, colorPickerHTML = '';
+            
+            switch(elementData.type) {
+                case 'text':
+                    label = 'Text Content';
+                    inputType = 'text';
+                    colorPickerHTML = `<input type="color" value="${elementData.color}" class="ml-4">`;
+                    break;
+                case 'image':
+                    label = 'Image URL';
+                    inputType = 'url';
+                    break;
+                case 'gif':
+                    label = 'GIF URL';
+                    inputType = 'url';
+                    break;
+                case 'logo':
+                    label = 'Logo URL';
+                    inputType = 'url';
+                    break;
+                case 'banner':
+                    label = 'Banner URL';
+                    inputType = 'url';
+                    break;
+                case 'audio':
+                    label = 'Audio URL';
+                    inputType = 'url';
+                    break;
+                case 'sound-effect':
+                    label = 'Sound Effect URL';
+                    inputType = 'url';
+                    break;
+                case 'core-text':
+                    label = 'Text Content';
+                    inputType = 'text';
+                    colorPickerHTML = `<input type="color" value="${elementData.color}" class="ml-4">`;
+                    break;
+                default:
+                    label = 'Content URL';
+                    inputType = 'url';
+            }
+
+            let audioControlsHTML = '';
+            if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
+                audioControlsHTML = `
+                    <div class="mt-3 space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-slate-300 font-medium">Upload Audio File:</label>
+                            <input type="file" class="audio-file-input" accept="audio/*" class="text-sm">
+                        </div>
+                        <div class="flex items-center space-x-2 flex-wrap gap-2">
+                            <button class="audio-play-btn bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-play"></i> Play
+                            </button>
+                            <button class="audio-stop-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-stop"></i> Stop
+                            </button>
+                            <button class="audio-test-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-volume-up"></i> Test
+                            </button>
+                            <label class="flex items-center space-x-2 text-sm text-slate-300">
+                                <input type="checkbox" class="audio-loop-checkbox" ${elementData.loop ? 'checked' : ''}>
+                                <span>Loop</span>
+                            </label>
+                            <label class="flex items-center space-x-2 text-sm text-slate-300">
+                                <span>Volume:</span>
+                                <input type="range" class="audio-volume-slider" min="0" max="100" value="${elementData.volume || 50}" class="w-20">
+                            </label>
+                        </div>
+                        <div class="audio-file-info text-xs text-slate-400">
+                            ${elementData.fileName ? `Current file: ${elementData.fileName}` : 'No file selected'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            let inputHTML = '';
+            if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
+                inputHTML = ''; // No URL input for audio elements
+            } else if (elementData.type === 'image' || elementData.type === 'gif' || elementData.type === 'logo' || elementData.type === 'banner') {
+                inputHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-slate-300 font-medium">Upload Image File:</label>
+                            <input type="file" class="image-file-input" accept="image/*" class="text-sm">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-slate-300">OR</span>
+                            <span class="text-sm text-slate-400">Enter URL:</span>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-4 py-2" placeholder="Enter ${label.toLowerCase()}...">
+                            ${colorPickerHTML}
+                        </div>
+                        <div class="image-file-info text-xs text-slate-400">
+                            ${elementData.fileName ? `Current file: ${elementData.fileName}` : 'No file selected'}
+                        </div>
+                    </div>
+                `;
+            } else {
+                inputHTML = `
+                    <div class="flex items-center">
+                        <input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-4 py-2" placeholder="Enter ${label.toLowerCase()}...">
+                        ${colorPickerHTML}
+                    </div>
+                `;
+            }
+
+            formCard.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-medium text-slate-300 capitalize text-sm">${elementData.type} Element</label>
+                    <button class="text-red-500 hover:text-red-400 text-sm">&times; Remove</button>
+                </div>
+                ${inputHTML}
+                ${audioControlsHTML}
+            `;
+            formCard.querySelector('button').onclick = () => removeDynamicElement(elementData.id);
+            
+            // Set up input event listeners for non-audio elements
+            if (elementData.type !== 'audio' && elementData.type !== 'sound-effect') {
+                const urlInput = formCard.querySelector(`input[type="${inputType}"]`);
+                if (urlInput) {
+                    urlInput.oninput = (e) => {
+                        updateDynamicElement(elementData.id, 'content', e.target.value);
+                        
+                        // Clear file info display when switching to URL
+                        if (elementData.type === 'image' || elementData.type === 'gif' || elementData.type === 'logo' || elementData.type === 'banner') {
+                            const imageFileInfo = formCard.querySelector('.image-file-info');
+                            if (imageFileInfo) {
+                                imageFileInfo.textContent = 'No file selected';
+                            }
+                        }
+                    };
+                }
+            }
+            
+            // Image file upload event listeners
+            if (elementData.type === 'image' || elementData.type === 'gif' || elementData.type === 'logo' || elementData.type === 'banner') {
+                const imageFileInput = formCard.querySelector('.image-file-input');
+                const imageFileInfo = formCard.querySelector('.image-file-info');
+                
+                if (imageFileInput && imageFileInfo) {
+                    imageFileInput.onchange = (e) => handleImageFileUpload(elementData.id, e.target.files[0], imageFileInfo);
+                }
+            }
+            
+            if(elementData.type === 'text' || elementData.type === 'core-text') {
+                const colorInput = formCard.querySelector('input[type="color"]');
+                if (colorInput) {
+                    colorInput.oninput = (e) => updateDynamicElement(elementData.id, 'color', e.target.value);
+                }
+            }
+            
+            // Audio controls event listeners
+            if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
+                const fileInput = formCard.querySelector('.audio-file-input');
+                const playBtn = formCard.querySelector('.audio-play-btn');
+                const stopBtn = formCard.querySelector('.audio-stop-btn');
+                const testBtn = formCard.querySelector('.audio-test-btn');
+                const loopCheckbox = formCard.querySelector('.audio-loop-checkbox');
+                const volumeSlider = formCard.querySelector('.audio-volume-slider');
+                const fileInfo = formCard.querySelector('.audio-file-info');
+                
+                fileInput.onchange = (e) => handleAudioFileUpload(elementData.id, e.target.files[0], fileInfo);
+                playBtn.onclick = () => playAudio(elementData.id);
+                stopBtn.onclick = () => stopAudio(elementData.id);
+                testBtn.onclick = () => testAudio(elementData.id);
+                loopCheckbox.onchange = (e) => updateDynamicElement(elementData.id, 'loop', e.target.checked);
+                volumeSlider.oninput = (e) => updateDynamicElement(elementData.id, 'volume', parseInt(e.target.value));
+            }
+            dynamicFormContainer.appendChild(formCard);
+
+            const displayEl = document.createElement('div');
+            displayEl.id = elementData.id;
+            displayEl.className = 'interactive-element';
+            
+            switch(elementData.type) {
+                case 'text':
+                    displayEl.innerHTML = `<h2 class="flex items-center justify-center text-center p-2" style="font-size: 5vmin; color: ${elementData.color};">${elementData.content}</h2>`;
+                    break;
+                case 'core-text':
+                    displayEl.innerHTML = `<h1 class="flex items-center justify-center text-center p-2 font-black uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]" style="font-size: 8vmin; color: ${elementData.color};">${elementData.content}</h1>`;
+                    break;
+                case 'image':
+                case 'gif':
+                case 'logo':
+                case 'banner':
+                    const hasImageFile = elementData.imageFile && elementData.fileName;
+                    const imageSrc = hasImageFile ? URL.createObjectURL(elementData.imageFile) : elementData.content;
+                    displayEl.innerHTML = `<img src="${imageSrc}" class="object-contain w-full h-full" alt="${elementData.type} element">`;
+                    break;
+                case 'audio':
+                case 'sound-effect':
+                    const hasFile = elementData.audioFile && elementData.fileName;
+                    displayEl.innerHTML = `
+                        <div class="w-full h-full flex items-center justify-center bg-slate-700 rounded-lg border-2 border-teal-500">
+                            <div class="text-center">
+                                <i class="fas fa-music text-teal-400 text-4xl mb-2"></i>
+                                <div class="text-teal-300 text-sm font-medium">${elementData.type === 'audio' ? 'Audio' : 'Sound Effect'}</div>
+                                <div class="text-slate-400 text-xs mt-1">
+                                    ${hasFile ? 'Click to play' : 'Upload file to play'}
+                                </div>
+                                ${hasFile ? `<div class="text-slate-500 text-xs mt-1">${elementData.fileName}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                default:
+                    displayEl.innerHTML = `<img src="${elementData.content}" class="object-contain w-full h-full" alt="${elementData.type} element">`;
+                    break;
+            }
+            
+            // Add click-to-play for audio elements
+            if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
+                displayEl.onclick = () => {
+                    if (elementData.audioFile) {
+                        playAudio(elementData.id);
+                    } else {
+                        alert('Please upload an audio file first.');
+                    }
+                };
+                displayEl.style.cursor = elementData.audioFile ? 'pointer' : 'default';
+            }
+            
+            dynamicDisplayContainer.appendChild(displayEl);
+            applyState(displayEl, dynamicElementStateKey, {});
+        }
+        
+        // --- AUDIO FUNCTIONS ---
+        function handleAudioFileUpload(elementId, file, fileInfoElement) {
+            if (!file) return;
+            
+            console.log('File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+            
+            // Validate file type
+            if (!file.type.startsWith('audio/')) {
+                alert('Please select a valid audio file. Supported formats: MP3, WAV, OGG, M4A, etc.');
+                return;
+            }
+            
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Audio file is too large. Please select a file smaller than 10MB.');
+                return;
+            }
+            
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element) return;
+            
+            // Clean up previous audio if exists
+            if (element.currentAudio) {
+                cleanupAudio(elementId);
+            }
+            
+            // Store file data
+            element.audioFile = file;
+            element.fileName = file.name;
+            element.fileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            
+            // Update file info display
+            fileInfoElement.textContent = `Current file: ${file.name} (${element.fileSize})`;
+            
+            // Save the element data
+            saveDynamicElements();
+            
+            console.log('Audio file uploaded successfully:', element.fileName);
+        }
+        
+        function testAudio(elementId) {
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element || !element.audioFile) {
+                alert('Please upload an audio file first.');
+                return;
+            }
+            
+            console.log('Testing audio for element:', elementId);
+            console.log('File:', element.fileName, 'Type:', element.audioFile.type);
+            
+            // Create a test audio element
+            const audioUrl = URL.createObjectURL(element.audioFile);
+            const testAudio = new Audio(audioUrl);
+            
+            testAudio.onloadeddata = () => {
+                console.log('Test audio loaded successfully');
+                alert('Audio file loaded successfully! File format is supported.');
+                URL.revokeObjectURL(audioUrl);
+            };
+            
+            testAudio.onerror = (error) => {
+                console.error('Test audio error:', error);
+                alert('Error loading audio file. Please check the file format.');
+                URL.revokeObjectURL(audioUrl);
+            };
+            
+            testAudio.load();
+        }
+        
+        function playAudio(elementId) {
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element || !element.audioFile) {
+                alert('Please upload an audio file first.');
+                return;
+            }
+            
+            // Stop any currently playing audio
+            stopAllAudio();
+            
+            // Create audio from file
+            const audioUrl = URL.createObjectURL(element.audioFile);
+            const audio = new Audio(audioUrl);
+            audio.volume = (element.volume || 50) / 100;
+            audio.loop = element.loop || false;
+            
+            // Store reference to current audio and URL for cleanup
+            element.currentAudio = audio;
+            element.currentAudioUrl = audioUrl;
+            
+            // Set up event handlers
+            audio.onloadeddata = () => {
+                console.log('Audio loaded successfully');
+                // Try to play after loading
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    if (error.name === 'NotAllowedError') {
+                        alert('Browser blocked audio playback. Please click the play button again.');
+                    } else {
+                        alert('Error playing audio. Please check the file and try again.');
+                    }
+                    cleanupAudio(elementId);
+                });
+            };
+            
+            audio.onerror = (error) => {
+                console.error('Audio loading error:', error);
+                alert('Error loading audio file. Please check the file format and try again.');
+                cleanupAudio(elementId);
+            };
+            
+            audio.onended = () => {
+                console.log('Audio playback ended');
+                cleanupAudio(elementId);
+            };
+            
+            audio.onpause = () => {
+                console.log('Audio paused');
+            };
+            
+            // Update play button state immediately
+            updatePlayButtonState(elementId, 'playing');
+            
+            // Start loading the audio
+            audio.load();
+        }
+        
+        function cleanupAudio(elementId) {
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element) return;
+            
+            if (element.currentAudio) {
+                element.currentAudio.pause();
+                element.currentAudio.currentTime = 0;
+                element.currentAudio = null;
+            }
+            
+            if (element.currentAudioUrl) {
+                URL.revokeObjectURL(element.currentAudioUrl);
+                element.currentAudioUrl = null;
+            }
+            
+            updatePlayButtonState(elementId, 'stopped');
+        }
+        
+        function updatePlayButtonState(elementId, state) {
+            const formCard = document.getElementById(`form-${elementId}`);
+            if (!formCard) return;
+            
+            const playBtn = formCard.querySelector('.audio-play-btn');
+            if (!playBtn) return;
+            
+            switch(state) {
+                case 'playing':
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    playBtn.classList.remove('bg-teal-500', 'hover:bg-teal-600');
+                    playBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                    playBtn.onclick = () => pauseAudio(elementId);
+                    break;
+                case 'paused':
+                case 'stopped':
+                    playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                    playBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                    playBtn.classList.add('bg-teal-500', 'hover:bg-teal-600');
+                    playBtn.onclick = () => playAudio(elementId);
+                    break;
+            }
+        }
+        
+        function pauseAudio(elementId) {
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element || !element.currentAudio) return;
+            
+            element.currentAudio.pause();
+            updatePlayButtonState(elementId, 'paused');
+        }
+        
+        function stopAudio(elementId) {
+            cleanupAudio(elementId);
+        }
+        
+        function stopAllAudio() {
+            dynamicElements.forEach(element => {
+                if (element.currentAudio) {
+                    element.currentAudio.pause();
+                    element.currentAudio.currentTime = 0;
+                    if (element.currentAudioUrl) {
+                        URL.revokeObjectURL(element.currentAudioUrl);
+                        element.currentAudioUrl = null;
+                    }
+                    element.currentAudio = null;
+                }
+            });
+        }
+        
+        // --- IMAGE FILE FUNCTIONS ---
+        function handleImageFileUpload(elementId, file, fileInfoElement) {
+            if (!file) return;
+            
+            console.log('Image file selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file. Supported formats: JPG, PNG, GIF, WebP, SVG, etc.');
+                return;
+            }
+            
+            // Validate file size (max 5MB for images)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image file is too large. Please select a file smaller than 5MB.');
+                return;
+            }
+            
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element) return;
+            
+            // Clean up previous image file if exists
+            if (element.imageFile && element.imageFileUrl) {
+                URL.revokeObjectURL(element.imageFileUrl);
+            }
+            
+            // Store file data
+            element.imageFile = file;
+            element.fileName = file.name;
+            element.fileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            
+            // Update file info display
+            fileInfoElement.textContent = `Current file: ${file.name} (${element.fileSize})`;
+            
+            // Save the element data
+            saveDynamicElements();
+            
+            // Update the display
+            updateImageDisplay(elementId);
+            
+            console.log('Image file uploaded successfully:', element.fileName);
+        }
+        
+        function updateImageDisplay(elementId) {
+            const element = dynamicElements.find(el => el.id === elementId);
+            if (!element) return;
+            
+            const displayEl = document.getElementById(elementId);
+            if (!displayEl) return;
+            
+            const hasImageFile = element.imageFile && element.fileName;
+            const imageSrc = hasImageFile ? URL.createObjectURL(element.imageFile) : element.content;
+            
+            // Clean up old URL if switching from file to URL
+            if (!hasImageFile && element.imageFileUrl) {
+                URL.revokeObjectURL(element.imageFileUrl);
+                element.imageFileUrl = null;
+            } else if (hasImageFile) {
+                element.imageFileUrl = imageSrc;
+            }
+            
+            displayEl.innerHTML = `<img src="${imageSrc}" class="object-contain w-full h-full" alt="${element.type} element">`;
+        }
+        
+        // --- INTERACT.JS LOGIC ---
+        function applyState(element, stateKey, defaultStates) {
+            const id = element.id;
+            const savedStates = JSON.parse(localStorage.getItem(stateKey)) || {};
+            let state;
+            if (stateKey === dynamicElementStateKey) {
+                 const dynEl = dynamicElements.find(e => e.id === id);
+                 state = dynEl ? dynEl.state : { x: 0.1, y: 0.1, width: 0.3, height: 0.15 };
+            } else {
+                state = savedStates[id] || defaultStates[id];
+            }
+            const parentWidth = displayView.clientWidth;
+            const parentHeight = displayView.clientHeight;
+            if(parentWidth === 0 || parentHeight === 0) return;
+            const newWidth = parentWidth * state.width;
+            const newHeight = parentHeight * state.height;
+            const x = parentWidth * state.x;
+            const y = parentHeight * state.y;
+            element.style.width = `${newWidth}px`;
+            element.style.height = `${newHeight}px`;
+            element.style.transform = `translate(${x}px, ${y}px)`;
+            element.setAttribute('data-x', x);
+            element.setAttribute('data-y', y);
+        }
+        
+        interact('.interactive-element').draggable({
+            listeners: {
+                start(event) { event.target.classList.add('is-interacting'); },
+                move(event) {
+                    let target = event.target;
+                    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                },
+                end(event) {
+                    event.target.classList.remove('is-interacting');
+                    const isStatic = !!defaultStaticStates[event.target.id];
+                    const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
+                    const id = event.target.id;
+                    const parentWidth = displayView.clientWidth;
+                    const parentHeight = displayView.clientHeight;
+                    const newX = (parseFloat(event.target.getAttribute('data-x')) || 0) / parentWidth;
+                    const newY = (parseFloat(event.target.getAttribute('data-y')) || 0) / parentHeight;
+
+                    if (isStatic) {
+                        const savedStates = JSON.parse(localStorage.getItem(stateKey)) || defaultStaticStates;
+                        savedStates[id] = { ...savedStates[id], x: newX, y: newY };
+                        localStorage.setItem(stateKey, JSON.stringify(savedStates));
+                    } else {
+                        const dynEl = dynamicElements.find(e => e.id === id);
+                        if (dynEl) { dynEl.state.x = newX; dynEl.state.y = newY; saveDynamicElements(); }
+                    }
+                }
+            }
+        }).resizable({
+            edges: { left: true, right: true, bottom: true, top: true },
+            listeners: {
+                start(event) { event.target.classList.add('is-interacting'); },
+                move(event) {
+                    let target = event.target;
+                    let x = parseFloat(target.getAttribute('data-x')) || 0;
+                    let y = parseFloat(target.getAttribute('data-y')) || 0;
+                    target.style.width = event.rect.width + 'px';
+                    target.style.height = event.rect.height + 'px';
+                    x += event.deltaRect.left;
+                    y += event.deltaRect.top;
+                    target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                },
+                end(event) {
+                    event.target.classList.remove('is-interacting');
+                    const isStatic = !!defaultStaticStates[event.target.id];
+                    const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
+                    const id = event.target.id;
+                    const parentWidth = displayView.clientWidth;
+                    const parentHeight = displayView.clientHeight;
+                    const newX = (parseFloat(event.target.getAttribute('data-x')) || 0) / parentWidth;
+                    const newY = (parseFloat(event.target.getAttribute('data-y')) || 0) / parentHeight;
+                    const newWidth = event.rect.width / parentWidth;
+                    const newHeight = event.rect.height / parentHeight;
+                    if (isStatic) {
+                        const savedStates = JSON.parse(localStorage.getItem(stateKey)) || defaultStaticStates;
+                        savedStates[id] = { width: newWidth, height: newHeight, x: newX, y: newY };
+                        localStorage.setItem(stateKey, JSON.stringify(savedStates));
+                    } else {
+                        const dynEl = dynamicElements.find(e => e.id === id);
+                        if (dynEl) { dynEl.state = { width: newWidth, height: newHeight, x: newX, y: newY }; saveDynamicElements(); }
+                    }
+                }
+            }
+        });
+
+        // --- EVENT LISTENERS ---
+        window.addEventListener('load', () => {
+            loadStaticController();
+            loadSocials();
+            loadDynamicElements();
+            document.querySelectorAll('#title-container, #gif-container, #timer-container, #socials-container').forEach(el => applyState(el, staticElementStateKey, defaultStaticStates));
+        });
+
+        document.getElementById('controller-ui').addEventListener('input', saveStaticContentData);
+        bgColorInput.addEventListener('input', (e) => { bgColorHex.value = e.target.value; });
+        bgColorHex.addEventListener('input', (e) => { bgColorInput.value = e.target.value; });
+
+        enableTimerCheckbox.addEventListener('change', () => {
+            timerInputContainer.classList.toggle('hidden', !enableTimerCheckbox.checked);
+        });
+
+        toggleBtn.addEventListener('click', toggleView);
+        closePreviewBtn.addEventListener('click', toggleView);
+        resetPositionBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset the layout for ALL elements? This will also remove all custom and social elements.')) {
+                localStorage.removeItem(staticElementStateKey);
+                localStorage.removeItem(dynamicElementStateKey);
+                localStorage.removeItem(socialHandlesStateKey);
+                dynamicElements = [];
+                socialHandles = [];
+                dynamicFormContainer.innerHTML = '';
+                dynamicDisplayContainer.innerHTML = '';
+                socialsFormContainer.innerHTML = '';
+                renderSocialsDisplay();
+                document.querySelectorAll('#title-container, #gif-container, #timer-container, #socials-container').forEach(el => applyState(el, staticElementStateKey, defaultStaticStates));
+            }
+        });
+
+        addTextBtn.addEventListener('click', () => addDynamicElement('text'));
+        addImageBtn.addEventListener('click', () => addDynamicElement('image'));
+        document.getElementById('add-gif-btn').addEventListener('click', () => addDynamicElement('gif'));
+        document.getElementById('add-logo-btn').addEventListener('click', () => addDynamicElement('logo'));
+        document.getElementById('add-banner-btn').addEventListener('click', () => addDynamicElement('banner'));
+        document.getElementById('add-audio-btn').addEventListener('click', () => addDynamicElement('audio'));
+        document.getElementById('add-sound-effect-btn').addEventListener('click', () => addDynamicElement('sound-effect'));
+        document.getElementById('add-core-text-btn').addEventListener('click', () => addDynamicElement('core-text'));
+        addSocialBtn.addEventListener('click', addSocial);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !displayView.classList.contains('hidden')) { toggleView(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); toggleView(); }
+        });
+        
+        window.addEventListener('resize', () => {
+            if (!displayView.classList.contains('hidden')) {
+                document.querySelectorAll('.interactive-element').forEach(el => {
+                    const isStatic = !!defaultStaticStates[el.id];
+                    const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
+                    const defaults = isStatic ? defaultStaticStates : {};
+                    applyState(el, stateKey, defaults);
+});
+            }
+        });
+
+    </script>
+</body>
+</html>
