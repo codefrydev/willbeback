@@ -23,9 +23,10 @@
     <meta property="og:image:width" content="32">
     <meta property="og:image:height" content="32">
     <meta property="og:image:alt" content="CodeFryDev Stream Dashboard">
+    <meta property="og:locale" content="en_US">
     
     <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="All-in-One Stream Dashboard | Live Stream Overlay Creator">
     <meta name="twitter:description" content="Create professional live stream overlays with our all-in-one dashboard. Customize titles, GIFs, countdown timers, social handles, and interactive elements for streaming platforms.">
     <meta name="twitter:image" content="https://codefrydev.in/favicon-32x32.png">
@@ -35,6 +36,15 @@
     <link rel="icon" type="image/png" sizes="32x32" href="https://codefrydev.in/favicon-32x32.png">
     <link rel="shortcut icon" href="https://codefrydev.in/favicon-32x32.png">
     <link rel="apple-touch-icon" href="https://codefrydev.in/favicon-32x32.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- Performance: Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://codefrydev.in/willbeback/">
@@ -135,7 +145,7 @@
     </script>
     
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM01Q3R43D" type="text/javascript"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM01Q3R43D" type="text/javascript" referrerpolicy="strict-origin-when-cross-origin"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -143,9 +153,14 @@
         gtag('config', 'G-VM01Q3R43D');
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+    <!-- Security Policies -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; connect-src 'self' https://www.google-analytics.com; media-src 'self' blob: data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
     <style>
         body { 
             font-family: 'Poppins', sans-serif;
@@ -168,20 +183,20 @@
             width: 100%;
             height: 100%;
         }
-        /* Style for color input */
+			/* Style for color input */
         input[type="color"] {
             -webkit-appearance: none;
             appearance: none;
             border: none;
-            width: 40px;
-            height: 40px;
+				width: 28px;
+				height: 28px;
             border-radius: 50%;
             cursor: pointer;
         }
         input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
-        input[type="color"]::-webkit-color-swatch {
+			input[type="color"]::-webkit-color-swatch {
             border: 2px solid #4a5568;
             border-radius: 50%;
         }
@@ -224,7 +239,7 @@
         }
         
         /* Color input hover effect */
-        input[type="color"]:hover {
+			input[type="color"]:hover {
             transform: scale(1.1);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
@@ -238,6 +253,16 @@
         .bg-slate-900:hover {
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
         }
+        
+        /* Alignment guide lines for drag/resize */
+        .alignment-guide {
+            position: absolute;
+            background-color: rgba(56, 189, 248, 0.6);
+            pointer-events: none;
+            z-index: 25;
+        }
+        .alignment-guide.vertical { width: 2px; top: 0; bottom: 0; }
+        .alignment-guide.horizontal { height: 2px; left: 0; right: 0; }
     </style>
 </head>
 <body class="bg-gray-800 text-white overflow-hidden">
@@ -246,17 +271,45 @@
     <div id="controller-ui" class="p-4 h-screen overflow-y-auto">
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold text-cyan-400">Stream Dashboard</h1>
-                <div class="flex space-x-2">
-                    <button id="reset-position-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
-                        Reset Layout
-                    </button>
-                    <button id="toggle-view-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
-                        Show Preview (Ctrl+P)
-                    </button>
-                </div>
-            </div>
+			<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+				<h2 class="text-2xl font-bold text-cyan-400">Stream Dashboard</h2>
+				<div class="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-2">
+					<!-- Profiles Toolbar -->
+					<div class="flex items-center gap-2 bg-slate-800/60 border border-slate-700 rounded-lg p-2">
+						<select id="profile-select" class="bg-slate-900 border border-slate-700 rounded-md px-2 h-9 text-sm min-w-[8rem]" title="Select profile">
+							<option value="" selected disabled>Profiles</option>
+						</select>
+						<input id="profile-name-input" type="text" placeholder="Profile name" class="bg-slate-900 border border-slate-700 rounded-md px-2 h-9 text-sm w-36" title="New or existing profile name" />
+						<div class="hidden sm:block h-9 w-px bg-slate-700"></div>
+						<button id="save-profile-btn" title="Save profile" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-2 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-save"></i><span class="hidden md:inline">Save</span>
+						</button>
+						<button id="load-profile-btn" title="Load selected profile" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-2 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-download"></i><span class="hidden md:inline">Load</span>
+						</button>
+						<button id="delete-profile-btn" title="Delete selected profile" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-2 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-trash"></i><span class="hidden md:inline">Delete</span>
+						</button>
+						<button id="export-profiles-btn" title="Export profiles JSON" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-2 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-file-export"></i><span class="hidden md:inline">Export</span>
+						</button>
+						<button id="import-profiles-btn" title="Import profiles JSON" class="bg-violet-500 hover:bg-violet-600 text-white font-semibold px-2 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-file-import"></i><span class="hidden md:inline">Import</span>
+						</button>
+						<input id="import-file-input" type="file" accept="application/json" class="hidden">
+					</div>
+
+					<!-- Layout/Preview -->
+					<div class="flex items-center gap-2">
+						<button id="reset-position-btn" title="Reset all positions and elements" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-rotate-left"></i><span class="hidden lg:inline">Reset</span>
+						</button>
+						<button id="toggle-view-btn" title="Toggle preview (Ctrl/Cmd + P)" class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-3 py-1.5 rounded-md text-sm flex items-center gap-1">
+							<i class="fas fa-desktop"></i><span class="hidden lg:inline">Show Preview</span>
+						</button>
+					</div>
+				</div>
+			</div>
 
             <!-- Main Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -270,13 +323,13 @@
                             <div>
                                 <label for="background-color-input" class="block text-sm font-medium text-slate-300 mb-1">Background Color</label>
                                 <div class="flex items-center space-x-2">
-                                    <input type="color" id="background-color-input">
-                                    <input type="text" id="background-color-hex" class="flex-1 bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+							<input type="color" id="background-color-input">
+							<input type="text" id="background-color-hex" class="flex-1 bg-slate-800 border border-slate-700 rounded-md px-3 h-9 text-sm">
                                 </div>
                             </div>
                             <div>
                                 <label for="background-image-input" class="block text-sm font-medium text-slate-300 mb-1">Background Image URL</label>
-                                <input type="url" id="background-image-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm" placeholder="https://...">
+						<input type="url" id="background-image-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 h-9 text-sm" placeholder="https://...">
                             </div>
                         </div>
                     </div>
@@ -288,16 +341,16 @@
                             <div class="flex items-end space-x-2">
                                 <div class="flex-grow">
                                     <label for="main-title-input" class="block text-sm font-medium text-slate-300 mb-1">Main Title</label>
-                                    <input type="text" id="main-title-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+							<input type="text" id="main-title-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 h-9 text-sm">
                                 </div>
                                 <div>
                                     <label for="main-title-color-input" class="block text-sm font-medium text-slate-300 mb-1 text-center">Color</label>
-                                    <input type="color" id="main-title-color-input">
+							<input type="color" id="main-title-color-input">
                                 </div>
                             </div>
                             <div>
                                 <label for="gif-url-input" class="block text-sm font-medium text-slate-300 mb-1">Primary GIF/Image URL</label>
-                                <input type="url" id="gif-url-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
+						<input type="url" id="gif-url-input" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 h-9 text-sm">
                             </div>
                             <div>
                                 <label for="enable-timer-checkbox" class="flex items-center space-x-2 cursor-pointer">
@@ -305,12 +358,12 @@
                                     <span class="text-sm font-medium text-slate-300">Enable Countdown Timer</span>
                                 </label>
                             </div>
-                             <div id="timer-input-container">
-                                 <label for="timer-minutes-input" class="block text-sm font-medium text-slate-300 mb-1">Countdown (Minutes)</label>
-                                 <input type="number" id="timer-minutes-input" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-sm">
-                             </div>
+					 <div id="timer-input-container">
+					 	<label for="timer-minutes-input" class="block text-sm font-medium text-slate-300 mb-1">Countdown (Minutes)</label>
+					 	<input type="number" id="timer-minutes-input" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-3 h-9 text-sm">
+					 </div>
                              <div class="pt-2 border-t border-slate-700">
-                                 <button id="add-core-text-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-3 rounded-lg transition-colors shadow-md w-full text-sm">
+					 	<button id="add-core-text-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md w-full text-sm">
                                      <i class="fas fa-plus mr-1"></i>Add Core Text Element
                                  </button>
                              </div>
@@ -325,7 +378,7 @@
                         <div id="socials-form-container" class="space-y-2 mb-3">
                             <!-- Social handle forms will be injected here -->
                         </div>
-                        <button id="add-social-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md w-full">
+					<button id="add-social-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md w-full text-sm">
                             <i class="fas fa-plus mr-2"></i>Add Social
                         </button>
                     </div>
@@ -341,7 +394,7 @@
                             <!-- Text Elements -->
                             <div>
                                 <h3 class="text-sm font-semibold text-slate-400 mb-2">Text</h3>
-                                <button id="add-text-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-lg transition-colors shadow-md w-full text-sm">
+						<button id="add-text-btn" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md w-full text-sm">
                                     <i class="fas fa-plus mr-1"></i>Add Text
                                 </button>
                             </div>
@@ -350,16 +403,16 @@
                             <div>
                                 <h3 class="text-sm font-semibold text-slate-400 mb-2">Images</h3>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <button id="add-image-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-image-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-image mr-1"></i>Image
                                     </button>
-                                    <button id="add-gif-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-gif-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-play mr-1"></i>GIF
                                     </button>
-                                    <button id="add-logo-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-logo-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-certificate mr-1"></i>Logo
                                     </button>
-                                    <button id="add-banner-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-banner-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-flag mr-1"></i>Banner
                                     </button>
                                 </div>
@@ -369,10 +422,10 @@
                             <div>
                                 <h3 class="text-sm font-semibold text-slate-400 mb-2">Audio</h3>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <button id="add-audio-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-audio-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-music mr-1"></i>Audio
                                     </button>
-                                    <button id="add-sound-effect-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-2 rounded-lg transition-colors shadow-md text-xs">
+							<button id="add-sound-effect-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded-md transition-colors shadow-md text-xs">
                                         <i class="fas fa-volume-up mr-1"></i>Sound FX
                                     </button>
                                 </div>
@@ -394,20 +447,20 @@
         <div id="display-background" class="w-full h-full bg-cover bg-center">
             
             <!-- Static Elements -->
-            <div id="title-container" class="interactive-element">
+            <div id="title-container" class="interactive-element" tabindex="0">
                 <h1 id="main-title" class="w-full h-full flex items-center justify-center text-center font-black uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]" style="font-size: 10vmin;"></h1>
             </div>
-            <div id="gif-container" class="interactive-element">
-                 <img id="gif-display" src="" alt="Live Stream GIF" class="w-full h-full object-contain">
+            <div id="gif-container" class="interactive-element" tabindex="0">
+                 <img id="gif-display" src="" alt="Live Stream GIF" class="w-full h-full object-contain" loading="lazy" decoding="async">
             </div>
-            <div id="timer-container" class="interactive-element">
+            <div id="timer-container" class="interactive-element" tabindex="0">
                 <div class="w-full h-full flex items-center justify-center">
                     <div class="bg-cyan-500/80 text-white font-bold py-3 px-6 rounded-full inline-block shadow-lg text-center" style="font-size: 5vmin;">
                         Returning in: <span id="countdown" class="font-mono"></span>
                     </div>
                 </div>
             </div>
-            <div id="socials-container" class="interactive-element">
+            <div id="socials-container" class="interactive-element" tabindex="0">
                 <div id="socials-display-wrapper" class="w-full h-full flex justify-center items-center flex-wrap gap-x-6 gap-y-2 text-slate-300 p-4">
                     <!-- Socials will be dynamically rendered here -->
                 </div>
@@ -416,10 +469,19 @@
             <div id="dynamic-elements-display-container"></div>
 
         </div>
-        <button id="close-preview-btn" class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-full w-10 h-10 flex items-center justify-center transition-colors shadow-md z-20">
+        <!-- Alignment Guides -->
+        <div id="v-guide" class="alignment-guide vertical" style="display: none;"></div>
+        <div id="h-guide" class="alignment-guide horizontal" style="display: none;"></div>
+        <button id="close-preview-btn" aria-label="Close preview" class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-full w-10 h-10 flex items-center justify-center transition-colors shadow-md z-20">
             <i class="fas fa-times text-xl"></i>
         </button>
     </div>
+
+    <noscript>
+        <div style="background:#0f172a;color:#e2e8f0;padding:12px;text-align:center;">
+            This app requires JavaScript to customize and preview your overlay.
+        </div>
+    </noscript>
 
     <script>
         // --- FORM ELEMENTS ---
@@ -460,14 +522,51 @@
         const displayView = document.getElementById('display-view');
         const closePreviewBtn = document.getElementById('close-preview-btn');
         const resetPositionBtn = document.getElementById('reset-position-btn');
+        const vGuide = document.getElementById('v-guide');
+        const hGuide = document.getElementById('h-guide');
+
+		// --- PROFILES UI ---
+		const profileSelect = document.getElementById('profile-select');
+		const profileNameInput = document.getElementById('profile-name-input');
+		const saveProfileBtn = document.getElementById('save-profile-btn');
+		const loadProfileBtn = document.getElementById('load-profile-btn');
+		const deleteProfileBtn = document.getElementById('delete-profile-btn');
 
         // --- STATE MANAGEMENT ---
         const staticElementStateKey = 'streamStaticElementsState';
         const dynamicElementStateKey = 'streamDynamicElementsState';
         const socialHandlesStateKey = 'streamSocialsState';
+		const profilesKey = 'streamProfiles';
         let countdownInterval;
         let dynamicElements = [];
         let socialHandles = [];
+
+        // --- UTILS ---
+        function safeGetJSON(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (raw == null) return fallback;
+                try { return JSON.parse(raw); } catch { return fallback; }
+            } catch { return fallback; }
+        }
+
+        function safeSetJSON(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+        }
+
+        function isSafeUrl(url, options) {
+            if (!url || typeof url !== 'string') return false;
+            const trimmed = url.trim().toLowerCase();
+            if (options && options.allowData && trimmed.startsWith('data:')) return true;
+            return trimmed.startsWith('https://') || trimmed.startsWith('http://');
+        }
+
+        function setImgAttributes(imgEl) {
+            if (!imgEl) return;
+            imgEl.setAttribute('loading', 'lazy');
+            imgEl.setAttribute('decoding', 'async');
+            imgEl.setAttribute('referrerpolicy', 'no-referrer');
+        }
 
         // --- DEFAULTS & CONFIG ---
         const socialIcons = {
@@ -525,16 +624,18 @@
                 bgColor: bgColorInput.value || defaultContent.bgColor,
                 bgImage: bgImageInput.value || defaultContent.bgImage,
             };
-            localStorage.setItem('streamScreenData', JSON.stringify(data));
+            safeSetJSON('streamScreenData', data);
             updateStaticDisplayContent(data);
         }
         
         function updateStaticDisplayContent(data) {
             titleEl.textContent = data.title;
             titleEl.style.color = data.titleColor;
-            if (gifEl.src !== data.gifUrl) gifEl.src = data.gifUrl;
+            const safeGif = isSafeUrl(data.gifUrl, { allowData: true }) ? data.gifUrl : '';
+            if (gifEl.src !== safeGif) gifEl.src = safeGif;
+            setImgAttributes(gifEl);
             
-            if (data.bgImage) {
+            if (data.bgImage && isSafeUrl(data.bgImage, { allowData: true })) {
                 displayBg.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('${data.bgImage}')`;
                 displayBg.style.backgroundColor = '';
             } else {
@@ -570,7 +671,7 @@
         }
 
         function loadStaticController() {
-            const savedData = JSON.parse(localStorage.getItem('streamScreenData')) || {};
+            const savedData = safeGetJSON('streamScreenData', {}) || {};
             titleInput.value = savedData.title || defaultContent.title;
             titleColorInput.value = savedData.titleColor || defaultContent.titleColor;
             gifUrlInput.value = savedData.gifUrl || defaultContent.gifUrl;
@@ -585,11 +686,11 @@
 
         // --- SOCIALS FUNCTIONS ---
         function saveSocials() {
-            localStorage.setItem(socialHandlesStateKey, JSON.stringify(socialHandles));
+            safeSetJSON(socialHandlesStateKey, socialHandles);
         }
 
         function loadSocials() {
-            const saved = JSON.parse(localStorage.getItem(socialHandlesStateKey));
+            const saved = safeGetJSON(socialHandlesStateKey, null);
             if (saved) {
                 socialHandles = saved;
                 socialsFormContainer.innerHTML = '';
@@ -626,21 +727,21 @@
             }
         }
 
-        function renderSocialForm(socialData) {
+		function renderSocialForm(socialData) {
             const formCard = document.createElement('div');
             formCard.id = `form-${socialData.id}`;
-            formCard.className = 'bg-slate-800 p-2 rounded-lg border border-slate-700 flex items-center space-x-2';
+			formCard.className = 'bg-slate-800 p-2 rounded-md border border-slate-700 flex items-center space-x-2';
             
             let options = '';
             for (const key in socialIcons) {
                 options += `<option value="${key}" ${socialData.icon === key ? 'selected' : ''}>${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
             }
 
-            formCard.innerHTML = `
-                <select class="bg-slate-700 border border-slate-600 rounded-md px-2 py-1 text-xs w-20">${options}</select>
-                <input type="text" value="${socialData.text}" class="flex-1 bg-slate-700 border border-slate-600 rounded-md px-2 py-1 text-xs">
-                <button class="text-red-500 hover:text-red-400 text-sm">&times;</button>
-            `;
+			formCard.innerHTML = `
+				<select class="bg-slate-700 border border-slate-600 rounded-md px-2 h-8 text-xs w-24">${options}</select>
+				<input type="text" value="${socialData.text}" class="flex-1 bg-slate-700 border border-slate-600 rounded-md px-2 h-8 text-xs" placeholder="@handle">
+				<button class="text-red-500 hover:text-red-400 text-sm px-2">&times;</button>
+			`;
 
             formCard.querySelector('select').onchange = (e) => updateSocial(socialData.id, 'icon', e.target.value);
             formCard.querySelector('input').oninput = (e) => updateSocial(socialData.id, 'text', e.target.value);
@@ -653,19 +754,23 @@
             socialHandles.forEach(s => {
                 const socialEl = document.createElement('div');
                 socialEl.className = 'flex items-center space-x-2';
-                socialEl.innerHTML = `
-                    <i class="${socialIcons[s.icon]} text-cyan-400" style="font-size: 4vmin;"></i>
-                    <span style="font-size: 3.5vmin;">${s.text}</span>
-                `;
+                const iconEl = document.createElement('i');
+                iconEl.className = `${socialIcons[s.icon]} text-cyan-400`;
+                iconEl.style.fontSize = '4vmin';
+                const textEl = document.createElement('span');
+                textEl.style.fontSize = '3.5vmin';
+                textEl.textContent = s.text || '';
+                socialEl.appendChild(iconEl);
+                socialEl.appendChild(textEl);
                 socialsDisplayWrapper.appendChild(socialEl);
             });
         }
 
         // --- DYNAMIC ELEMENT FUNCTIONS ---
-        function saveDynamicElements() { localStorage.setItem(dynamicElementStateKey, JSON.stringify(dynamicElements)); }
+        function saveDynamicElements() { safeSetJSON(dynamicElementStateKey, dynamicElements); }
 
         function loadDynamicElements() {
-            const saved = JSON.parse(localStorage.getItem(dynamicElementStateKey));
+            const saved = safeGetJSON(dynamicElementStateKey, null);
             if (saved) {
                 dynamicElements = saved;
                 dynamicElements.forEach(renderDynamicElement);
@@ -768,7 +873,7 @@
         function renderDynamicElement(elementData) {
             const formCard = document.createElement('div');
             formCard.id = `form-${elementData.id}`;
-            formCard.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700';
+			formCard.className = 'bg-slate-800 p-2 rounded-md border border-slate-700';
             
             let label, inputType, colorPickerHTML = '';
             
@@ -814,20 +919,20 @@
 
             let audioControlsHTML = '';
             if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
-                audioControlsHTML = `
+					audioControlsHTML = `
                     <div class="mt-3 space-y-3">
                         <div class="flex items-center space-x-2">
                             <label class="text-sm text-slate-300 font-medium">Upload Audio File:</label>
-                            <input type="file" class="audio-file-input" accept="audio/*" class="text-sm">
+								<input type="file" class="audio-file-input" accept="audio/*" class="text-sm">
                         </div>
                         <div class="flex items-center space-x-2 flex-wrap gap-2">
-                            <button class="audio-play-btn bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm">
+								<button class="audio-play-btn bg-teal-500 hover:bg-teal-600 text-white px-2.5 py-1.5 rounded-md text-xs">
                                 <i class="fas fa-play"></i> Play
                             </button>
-                            <button class="audio-stop-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+								<button class="audio-stop-btn bg-red-500 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-md text-xs">
                                 <i class="fas fa-stop"></i> Stop
                             </button>
-                            <button class="audio-test-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+								<button class="audio-test-btn bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1.5 rounded-md text-xs">
                                 <i class="fas fa-volume-up"></i> Test
                             </button>
                             <label class="flex items-center space-x-2 text-sm text-slate-300">
@@ -836,7 +941,7 @@
                             </label>
                             <label class="flex items-center space-x-2 text-sm text-slate-300">
                                 <span>Volume:</span>
-                                <input type="range" class="audio-volume-slider" min="0" max="100" value="${elementData.volume || 50}" class="w-20">
+									<input type="range" class="audio-volume-slider" min="0" max="100" value="${elementData.volume || 50}" class="w-20">
                             </label>
                         </div>
                         <div class="audio-file-info text-xs text-slate-400">
@@ -850,32 +955,32 @@
             if (elementData.type === 'audio' || elementData.type === 'sound-effect') {
                 inputHTML = ''; // No URL input for audio elements
             } else if (elementData.type === 'image' || elementData.type === 'gif' || elementData.type === 'logo' || elementData.type === 'banner') {
-                inputHTML = `
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2">
-                            <label class="text-sm text-slate-300 font-medium">Upload Image File:</label>
-                            <input type="file" class="image-file-input" accept="image/*" class="text-sm">
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm text-slate-300">OR</span>
-                            <span class="text-sm text-slate-400">Enter URL:</span>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-4 py-2" placeholder="Enter ${label.toLowerCase()}...">
-                            ${colorPickerHTML}
-                        </div>
-                        <div class="image-file-info text-xs text-slate-400">
-                            ${elementData.fileName ? `Current file: ${elementData.fileName}` : 'No file selected'}
-                        </div>
-                    </div>
-                `;
+				inputHTML = `
+					<div class="space-y-3">
+						<div class="flex items-center space-x-2">
+							<label class="text-sm text-slate-300 font-medium">Upload Image File:</label>
+							<input type="file" class="image-file-input" accept="image/*" class="text-sm">
+						</div>
+						<div class="flex items-center space-x-2">
+							<span class="text-sm text-slate-300">OR</span>
+							<span class="text-sm text-slate-400">Enter URL:</span>
+						</div>
+						<div class="flex items-center">
+							<input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 h-9 text-sm" placeholder="Enter ${label.toLowerCase()}...">
+							${colorPickerHTML}
+						</div>
+						<div class="image-file-info text-xs text-slate-400">
+							${elementData.fileName ? `Current file: ${elementData.fileName}` : 'No file selected'}
+						</div>
+					</div>
+				`;
             } else {
-                inputHTML = `
-                    <div class="flex items-center">
-                        <input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-4 py-2" placeholder="Enter ${label.toLowerCase()}...">
-                        ${colorPickerHTML}
-                    </div>
-                `;
+				inputHTML = `
+					<div class="flex items-center">
+						<input type="${inputType}" value="${elementData.content}" class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 h-9 text-sm" placeholder="Enter ${label.toLowerCase()}...">
+						${colorPickerHTML}
+					</div>
+				`;
             }
 
             formCard.innerHTML = `
@@ -948,18 +1053,21 @@
             
             switch(elementData.type) {
                 case 'text':
-                    displayEl.innerHTML = `<h2 class="flex items-center justify-center text-center p-2" style="font-size: 5vmin; color: ${elementData.color};">${elementData.content}</h2>`;
+                    displayEl.innerHTML = `<h2 class=\"flex items-center justify-center text-center p-2\" style=\"font-size: 5vmin; color: ${elementData.color};\"></h2>`;
+                    displayEl.firstElementChild.textContent = elementData.content;
                     break;
                 case 'core-text':
-                    displayEl.innerHTML = `<h1 class="flex items-center justify-center text-center p-2 font-black uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]" style="font-size: 8vmin; color: ${elementData.color};">${elementData.content}</h1>`;
+                    displayEl.innerHTML = `<h1 class=\"flex items-center justify-center text-center p-2 font-black uppercase tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]\" style=\"font-size: 8vmin; color: ${elementData.color};\"></h1>`;
+                    displayEl.firstElementChild.textContent = elementData.content;
                     break;
                 case 'image':
                 case 'gif':
                 case 'logo':
                 case 'banner':
                     const hasImageFile = elementData.imageFile && elementData.fileName;
-                    const imageSrc = hasImageFile ? URL.createObjectURL(elementData.imageFile) : elementData.content;
-                    displayEl.innerHTML = `<img src="${imageSrc}" class="object-contain w-full h-full" alt="${elementData.type} element">`;
+                    const imageSrc = hasImageFile ? URL.createObjectURL(elementData.imageFile) : (isSafeUrl(elementData.content, { allowData: true }) ? elementData.content : '');
+                    displayEl.innerHTML = `<img src=\"${imageSrc}\" class=\"object-contain w-full h-full\" alt=\"${elementData.type} element\">`;
+                    setImgAttributes(displayEl.firstElementChild);
                     break;
                 case 'audio':
                 case 'sound-effect':
@@ -978,7 +1086,8 @@
                     `;
                     break;
                 default:
-                    displayEl.innerHTML = `<img src="${elementData.content}" class="object-contain w-full h-full" alt="${elementData.type} element">`;
+                    displayEl.innerHTML = `<img src=\"${isSafeUrl(elementData.content, { allowData: true }) ? elementData.content : ''}\" class=\"object-contain w-full h-full\" alt=\"${elementData.type} element\">`;
+                    setImgAttributes(displayEl.firstElementChild);
                     break;
             }
             
@@ -996,6 +1105,7 @@
             
             dynamicDisplayContainer.appendChild(displayEl);
             applyState(displayEl, dynamicElementStateKey, {});
+            displayEl.setAttribute('tabindex', '0');
         }
         
         // --- AUDIO FUNCTIONS ---
@@ -1243,7 +1353,7 @@
             if (!displayEl) return;
             
             const hasImageFile = element.imageFile && element.fileName;
-            const imageSrc = hasImageFile ? URL.createObjectURL(element.imageFile) : element.content;
+            const imageSrc = hasImageFile ? URL.createObjectURL(element.imageFile) : (isSafeUrl(element.content, { allowData: true }) ? element.content : '');
             
             // Clean up old URL if switching from file to URL
             if (!hasImageFile && element.imageFileUrl) {
@@ -1253,13 +1363,159 @@
                 element.imageFileUrl = imageSrc;
             }
             
-            displayEl.innerHTML = `<img src="${imageSrc}" class="object-contain w-full h-full" alt="${element.type} element">`;
+            displayEl.innerHTML = `<img src=\"${imageSrc}\" class=\"object-contain w-full h-full\" alt=\"${element.type} element\">`;
+            setImgAttributes(displayEl.firstElementChild);
         }
         
         // --- INTERACT.JS LOGIC ---
+        function updateAlignmentGuides(target) {
+            // Kept for backward compatibility: show center guides if close.
+            if (displayView.classList.contains('hidden')) return;
+            const parentWidth = displayView.clientWidth;
+            const parentHeight = displayView.clientHeight;
+            if (!parentWidth || !parentHeight) return;
+
+            const x = parseFloat(target.getAttribute('data-x')) || 0;
+            const y = parseFloat(target.getAttribute('data-y')) || 0;
+            const w = target.offsetWidth;
+            const h = target.offsetHeight;
+
+            const centerX = parentWidth / 2;
+            const centerY = parentHeight / 2;
+            const elCenterX = x + w / 2;
+            const elCenterY = y + h / 2;
+            const threshold = 8; // px
+
+            if (Math.abs(elCenterX - centerX) <= threshold) {
+                vGuide.style.left = centerX + 'px';
+                vGuide.style.display = 'block';
+            } else {
+                vGuide.style.display = 'none';
+            }
+
+            if (Math.abs(elCenterY - centerY) <= threshold) {
+                hGuide.style.top = centerY + 'px';
+                hGuide.style.display = 'block';
+            } else {
+                hGuide.style.display = 'none';
+            }
+        }
+
+        function hideAlignmentGuides() {
+            vGuide.style.display = 'none';
+            hGuide.style.display = 'none';
+        }
+
+        function collectAlignmentTargets(excludeEl) {
+            const parentWidth = displayView.clientWidth;
+            const parentHeight = displayView.clientHeight;
+            const vertical = [parentWidth / 2];
+            const horizontal = [parentHeight / 2];
+            const elements = displayView.querySelectorAll('.interactive-element');
+            elements.forEach(el => {
+                if (el === excludeEl) return;
+                const ex = parseFloat(el.getAttribute('data-x')) || 0;
+                const ey = parseFloat(el.getAttribute('data-y')) || 0;
+                const ew = el.offsetWidth;
+                const eh = el.offsetHeight;
+                vertical.push(ex, ex + ew / 2, ex + ew);
+                horizontal.push(ey, ey + eh / 2, ey + eh);
+            });
+            return { vertical, horizontal };
+        }
+
+        function computeNearest(anchors, targets, threshold) {
+            let best = { delta: 0, guide: null, dist: Infinity };
+            anchors.forEach(anchor => {
+                targets.forEach(t => {
+                    const d = Math.abs(t - anchor);
+                    if (d < best.dist) { best = { delta: t - anchor, guide: t, dist: d }; }
+                });
+            });
+            if (best.dist <= threshold) return best;
+            return null;
+        }
+
+        function showGuides(vx, hy) {
+            if (typeof vx === 'number') { vGuide.style.left = vx + 'px'; vGuide.style.display = 'block'; } else { vGuide.style.display = 'none'; }
+            if (typeof hy === 'number') { hGuide.style.top = hy + 'px'; hGuide.style.display = 'block'; } else { hGuide.style.display = 'none'; }
+        }
+
+        function applyDragSnap(target, x, y) {
+            const threshold = 8;
+            const w = target.offsetWidth;
+            const h = target.offsetHeight;
+            const anchorsX = [x, x + w / 2, x + w];
+            const anchorsY = [y, y + h / 2, y + h];
+            const { vertical, horizontal } = collectAlignmentTargets(target);
+
+            const vx = computeNearest(anchorsX, vertical, threshold);
+            const hy = computeNearest(anchorsY, horizontal, threshold);
+
+            const snappedX = vx ? x + vx.delta : x;
+            const snappedY = hy ? y + hy.delta : y;
+
+            showGuides(vx ? vx.guide : null, hy ? hy.guide : null);
+
+            return { x: snappedX, y: snappedY };
+        }
+
+        function applyResizeSnap(target, x, y, width, height, edges) {
+            const threshold = 8;
+            const right = x + width;
+            const bottom = y + height;
+            const { vertical, horizontal } = collectAlignmentTargets(target);
+
+            let snappedVX = null;
+            if (edges && (edges.left || edges.right)) {
+                const anchors = [];
+                if (edges.left) anchors.push(x);
+                if (edges.right) anchors.push(right);
+                const best = computeNearest(anchors, vertical, threshold);
+                if (best) {
+                    // Decide which edge snapped by comparing which anchor matched
+                    const leftDist = Math.abs(best.guide - x);
+                    const rightDist = Math.abs(best.guide - right);
+                    if (edges.left && (!edges.right || leftDist <= rightDist)) {
+                        // Snap left, keep right constant
+                        x = best.guide;
+                        width = Math.max(0, right - x);
+                        snappedVX = best.guide;
+                    } else if (edges.right) {
+                        // Snap right, keep left constant
+                        width = Math.max(0, best.guide - x);
+                        snappedVX = best.guide;
+                    }
+                }
+            }
+
+            let snappedHY = null;
+            if (edges && (edges.top || edges.bottom)) {
+                const anchors = [];
+                if (edges.top) anchors.push(y);
+                if (edges.bottom) anchors.push(bottom);
+                const best = computeNearest(anchors, horizontal, threshold);
+                if (best) {
+                    const topDist = Math.abs(best.guide - y);
+                    const bottomDist = Math.abs(best.guide - bottom);
+                    if (edges.top && (!edges.bottom || topDist <= bottomDist)) {
+                        y = best.guide;
+                        height = Math.max(0, bottom - y);
+                        snappedHY = best.guide;
+                    } else if (edges.bottom) {
+                        height = Math.max(0, best.guide - y);
+                        snappedHY = best.guide;
+                    }
+                }
+            }
+
+            showGuides(snappedVX, snappedHY);
+
+            return { x, y, width, height };
+        }
         function applyState(element, stateKey, defaultStates) {
             const id = element.id;
-            const savedStates = JSON.parse(localStorage.getItem(stateKey)) || {};
+            const savedStates = safeGetJSON(stateKey, {}) || {};
             let state;
             if (stateKey === dynamicElementStateKey) {
                  const dynEl = dynamicElements.find(e => e.id === id);
@@ -1282,18 +1538,32 @@
         }
         
         interact('.interactive-element').draggable({
+            modifiers: [
+                interact.modifiers.snap({
+                    targets: [interact.snappers.grid({ x: 10, y: 10 })],
+                    range: 8
+                })
+            ],
             listeners: {
-                start(event) { event.target.classList.add('is-interacting'); },
+                start(event) { 
+                    event.target.classList.add('is-interacting'); 
+                    const x0 = parseFloat(event.target.getAttribute('data-x')) || 0;
+                    const y0 = parseFloat(event.target.getAttribute('data-y')) || 0;
+                    applyDragSnap(event.target, x0, y0);
+                },
                 move(event) {
                     let target = event.target;
                     let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
                     let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                    const snapped = applyDragSnap(target, x, y);
+                    x = snapped.x; y = snapped.y;
                     target.style.transform = `translate(${x}px, ${y}px)`;
                     target.setAttribute('data-x', x);
                     target.setAttribute('data-y', y);
                 },
                 end(event) {
                     event.target.classList.remove('is-interacting');
+                    hideAlignmentGuides();
                     const isStatic = !!defaultStaticStates[event.target.id];
                     const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
                     const id = event.target.id;
@@ -1303,9 +1573,9 @@
                     const newY = (parseFloat(event.target.getAttribute('data-y')) || 0) / parentHeight;
 
                     if (isStatic) {
-                        const savedStates = JSON.parse(localStorage.getItem(stateKey)) || defaultStaticStates;
+                        const savedStates = safeGetJSON(stateKey, { ...defaultStaticStates });
                         savedStates[id] = { ...savedStates[id], x: newX, y: newY };
-                        localStorage.setItem(stateKey, JSON.stringify(savedStates));
+                        safeSetJSON(stateKey, savedStates);
                     } else {
                         const dynEl = dynamicElements.find(e => e.id === id);
                         if (dynEl) { dynEl.state.x = newX; dynEl.state.y = newY; saveDynamicElements(); }
@@ -1314,22 +1584,37 @@
             }
         }).resizable({
             edges: { left: true, right: true, bottom: true, top: true },
+            modifiers: [
+                interact.modifiers.snapSize({
+                    targets: [interact.snappers.grid({ x: 10, y: 10 })]
+                })
+            ],
             listeners: {
-                start(event) { event.target.classList.add('is-interacting'); },
+                start(event) { 
+                    event.target.classList.add('is-interacting'); 
+                    const x0 = parseFloat(event.target.getAttribute('data-x')) || 0;
+                    const y0 = parseFloat(event.target.getAttribute('data-y')) || 0;
+                    applyDragSnap(event.target, x0, y0);
+                },
                 move(event) {
                     let target = event.target;
                     let x = parseFloat(target.getAttribute('data-x')) || 0;
                     let y = parseFloat(target.getAttribute('data-y')) || 0;
-                    target.style.width = event.rect.width + 'px';
-                    target.style.height = event.rect.height + 'px';
+                    let width = event.rect.width;
+                    let height = event.rect.height;
                     x += event.deltaRect.left;
                     y += event.deltaRect.top;
+                    const snapped = applyResizeSnap(target, x, y, width, height, event.edges || {});
+                    x = snapped.x; y = snapped.y; width = snapped.width; height = snapped.height;
+                    target.style.width = width + 'px';
+                    target.style.height = height + 'px';
                     target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
                     target.setAttribute('data-x', x);
                     target.setAttribute('data-y', y);
                 },
                 end(event) {
                     event.target.classList.remove('is-interacting');
+                    hideAlignmentGuides();
                     const isStatic = !!defaultStaticStates[event.target.id];
                     const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
                     const id = event.target.id;
@@ -1337,12 +1622,12 @@
                     const parentHeight = displayView.clientHeight;
                     const newX = (parseFloat(event.target.getAttribute('data-x')) || 0) / parentWidth;
                     const newY = (parseFloat(event.target.getAttribute('data-y')) || 0) / parentHeight;
-                    const newWidth = event.rect.width / parentWidth;
-                    const newHeight = event.rect.height / parentHeight;
+                    const newWidth = (event.target.offsetWidth) / parentWidth;
+                    const newHeight = (event.target.offsetHeight) / parentHeight;
                     if (isStatic) {
-                        const savedStates = JSON.parse(localStorage.getItem(stateKey)) || defaultStaticStates;
+                        const savedStates = safeGetJSON(stateKey, { ...defaultStaticStates });
                         savedStates[id] = { width: newWidth, height: newHeight, x: newX, y: newY };
-                        localStorage.setItem(stateKey, JSON.stringify(savedStates));
+                        safeSetJSON(stateKey, savedStates);
                     } else {
                         const dynEl = dynamicElements.find(e => e.id === id);
                         if (dynEl) { dynEl.state = { width: newWidth, height: newHeight, x: newX, y: newY }; saveDynamicElements(); }
@@ -1351,12 +1636,108 @@
             }
         });
 
+		// --- PROFILES MANAGEMENT ---
+		function getProfilesMap() {
+			return safeGetJSON(profilesKey, {});
+		}
+
+		function saveProfilesMap(map) {
+			safeSetJSON(profilesKey, map);
+		}
+
+		function refreshProfileList(selectedName) {
+			const map = getProfilesMap();
+			const names = Object.keys(map).sort((a, b) => a.localeCompare(b));
+			// Preserve the first placeholder option
+			while (profileSelect.options.length > 1) { profileSelect.remove(1); }
+			names.forEach(name => {
+				const opt = document.createElement('option');
+				opt.value = name;
+				opt.textContent = name;
+				profileSelect.appendChild(opt);
+			});
+			if (selectedName && names.includes(selectedName)) {
+				profileSelect.value = selectedName;
+				profileNameInput.value = selectedName;
+			} else {
+				profileSelect.value = '';
+			}
+		}
+
+		function snapshotCurrentConfig() {
+			// Ensure latest data is saved to localStorage
+			saveStaticContentData();
+			saveSocials();
+			saveDynamicElements();
+
+			return {
+				streamScreenData: localStorage.getItem('streamScreenData') || JSON.stringify(defaultContent),
+				staticElementState: localStorage.getItem(staticElementStateKey) || JSON.stringify(defaultStaticStates),
+				dynamicElementState: localStorage.getItem(dynamicElementStateKey) || '[]',
+				socialHandlesState: localStorage.getItem(socialHandlesStateKey) || '[]',
+				_savedAt: new Date().toISOString()
+			};
+		}
+
+		function applyProfileSnapshot(snapshot) {
+			if (!snapshot) return;
+			localStorage.setItem('streamScreenData', snapshot.streamScreenData || JSON.stringify(defaultContent));
+			localStorage.setItem(staticElementStateKey, snapshot.staticElementState || JSON.stringify(defaultStaticStates));
+			localStorage.setItem(dynamicElementStateKey, snapshot.dynamicElementState || '[]');
+			localStorage.setItem(socialHandlesStateKey, snapshot.socialHandlesState || '[]');
+
+			// Reset current UI state and reload from localStorage
+			dynamicElements = [];
+			socialHandles = [];
+			dynamicFormContainer.innerHTML = '';
+			dynamicDisplayContainer.innerHTML = '';
+			socialsFormContainer.innerHTML = '';
+
+			loadStaticController();
+			loadSocials();
+			loadDynamicElements();
+			// Re-apply positions for static elements if preview is open
+			document.querySelectorAll('#title-container, #gif-container, #timer-container, #socials-container').forEach(el => applyState(el, staticElementStateKey, defaultStaticStates));
+		}
+
+		function saveCurrentAsProfile() {
+			const name = (profileNameInput.value || '').trim();
+			if (!name) { alert('Please enter a profile name.'); return; }
+			const profiles = getProfilesMap();
+			if (profiles[name] && !confirm(`Profile "${name}" exists. Overwrite?`)) { return; }
+			profiles[name] = snapshotCurrentConfig();
+			saveProfilesMap(profiles);
+			refreshProfileList(name);
+			alert('Profile saved.');
+		}
+
+		function loadSelectedProfile() {
+			const name = profileSelect.value;
+			if (!name) { alert('Please select a profile to load.'); return; }
+			const profiles = getProfilesMap();
+			if (!profiles[name]) { alert('Selected profile not found.'); return; }
+			applyProfileSnapshot(profiles[name]);
+		}
+
+		function deleteSelectedProfile() {
+			const name = profileSelect.value || (profileNameInput.value || '').trim();
+			if (!name) { alert('Please select or enter a profile to delete.'); return; }
+			const profiles = getProfilesMap();
+			if (!profiles[name]) { alert('Profile not found.'); return; }
+			if (!confirm(`Delete profile "${name}"? This cannot be undone.`)) { return; }
+			delete profiles[name];
+			saveProfilesMap(profiles);
+			refreshProfileList('');
+			alert('Profile deleted.');
+		}
+
         // --- EVENT LISTENERS ---
         window.addEventListener('load', () => {
             loadStaticController();
             loadSocials();
             loadDynamicElements();
             document.querySelectorAll('#title-container, #gif-container, #timer-container, #socials-container').forEach(el => applyState(el, staticElementStateKey, defaultStaticStates));
+			refreshProfileList();
         });
 
         document.getElementById('controller-ui').addEventListener('input', saveStaticContentData);
@@ -1384,6 +1765,51 @@
             }
         });
 
+		// Profiles events
+		saveProfileBtn.addEventListener('click', saveCurrentAsProfile);
+		loadProfileBtn.addEventListener('click', loadSelectedProfile);
+		deleteProfileBtn.addEventListener('click', deleteSelectedProfile);
+		profileSelect.addEventListener('change', () => { profileNameInput.value = profileSelect.value || ''; });
+		document.getElementById('export-profiles-btn').addEventListener('click', () => {
+			const data = getProfilesMap();
+			const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'stream-profiles.json';
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		});
+		document.getElementById('import-profiles-btn').addEventListener('click', () => {
+			document.getElementById('import-file-input').click();
+		});
+		document.getElementById('import-file-input').addEventListener('change', (e) => {
+			const file = e.target.files && e.target.files[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				try {
+					const imported = JSON.parse(reader.result);
+					if (imported && typeof imported === 'object') {
+						const existing = getProfilesMap();
+						const merged = { ...existing, ...imported };
+						saveProfilesMap(merged);
+						refreshProfileList();
+						alert('Profiles imported successfully.');
+					} else {
+						alert('Invalid profiles file.');
+					}
+				} catch {
+					alert('Failed to parse profiles file.');
+				}
+			};
+			reader.readAsText(file);
+			// reset input
+			e.target.value = '';
+		});
+
         addTextBtn.addEventListener('click', () => addDynamicElement('text'));
         addImageBtn.addEventListener('click', () => addDynamicElement('image'));
         document.getElementById('add-gif-btn').addEventListener('click', () => addDynamicElement('gif'));
@@ -1397,6 +1823,38 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !displayView.classList.contains('hidden')) { toggleView(); }
             if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); toggleView(); }
+            if (!displayView.classList.contains('hidden')) {
+                const step = e.shiftKey ? 10 : 1;
+                if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) {
+                    e.preventDefault();
+                    let dx = 0, dy = 0;
+                    if (e.key === 'ArrowLeft') dx = -step;
+                    if (e.key === 'ArrowRight') dx = step;
+                    if (e.key === 'ArrowUp') dy = -step;
+                    if (e.key === 'ArrowDown') dy = step;
+                    const target = document.activeElement;
+                    if (target && target.classList && target.classList.contains('interactive-element')) {
+                        let x = (parseFloat(target.getAttribute('data-x')) || 0) + dx;
+                        let y = (parseFloat(target.getAttribute('data-y')) || 0) + dy;
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+                        const isStatic = !!defaultStaticStates[target.id];
+                        const stateKey = isStatic ? staticElementStateKey : dynamicElementStateKey;
+                        const parentWidth = displayView.clientWidth;
+                        const parentHeight = displayView.clientHeight;
+                        const newX = x / parentWidth; const newY = y / parentHeight;
+                        if (isStatic) {
+                            const savedStates = safeGetJSON(stateKey, { ...defaultStaticStates });
+                            savedStates[target.id] = { ...(savedStates[target.id] || defaultStaticStates[target.id] || {}), x: newX, y: newY };
+                            safeSetJSON(stateKey, savedStates);
+                        } else {
+                            const dynEl = dynamicElements.find(e => e.id === target.id);
+                            if (dynEl) { dynEl.state.x = newX; dynEl.state.y = newY; saveDynamicElements(); }
+                        }
+                    }
+                }
+            }
         });
         
         window.addEventListener('resize', () => {
